@@ -21,12 +21,9 @@ def main():
     #print(df.loc[:, 'Total Time (s)'])
 
     normloadpos = normalize(df.loc[:, 'Load(8800 (0,3):Load) (kN)'], df.loc[:, 'Position(8800 (0,3):Position) (mm)'])
-
-    max = max_load(normloadpos)
-    print(max)
-
+    xmax, ymax = max_load(normloadpos)
     df.plot(x = 'Position(8800 (0,3):Position) (mm)', y = 'Load(8800 (0,3):Load) (kN)')
-
+    annot_max(xmax, ymax, plt)
     plt.title('1A')
     plt.legend().set_visible(False)
     plt.xlabel('Position (in)')
@@ -53,19 +50,17 @@ def normalize(load, position):
     return df
 
 def max_load(loadpos):
-    return loadpos.max()
+    max_value = loadpos['Load(8800 (0,3):Load) (kN)'].max()
+    x_max = loadpos[loadpos['Load(8800 (0,3):Load) (kN)'] == max_value]['Position(8800 (0,3):Position) (mm)'].values[0]
+    return x_max, max_value 
 
-#def annot_max(max, ax=None):
-    xmax = x[np.argmax(y)]
-    ymax = y.max()
+def annot_max(xmax, ymax, ax=None):
     text= "x={:.3f}, y={:.3f}".format(xmax, ymax)
-    if not ax:
-        ax=plt.gca()
     bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
     arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=0,angleB=60")
     kw = dict(xycoords='data',textcoords="axes fraction",
               arrowprops=arrowprops, bbox=bbox_props, ha="right", va="top")
-    ax.annotate(text, xy=(xmax, ymax), xytext=(0.94,0.96), **kw)
+    ax.annotate(text, xy=(xmax, ymax), xytext=(0.50,0.20), **kw)
 
 #def approx_elastic_mod(loadpos, max):
     
