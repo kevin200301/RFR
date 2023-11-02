@@ -55,12 +55,12 @@ def max_load(loadpos):
     return x_max, max_value 
 
 def annot_max(xmax, ymax, ax=None):
-    text= "x={:.3f}, y={:.3f}".format(xmax, ymax)
+    text= "Max Load: x={:.3f}, y={:.3f}".format(xmax, ymax)
     bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
     arrowprops=dict(arrowstyle="->",connectionstyle="angle,angleA=0,angleB=60")
     kw = dict(xycoords='data',textcoords="axes fraction",
               arrowprops=arrowprops, bbox=bbox_props, ha="right", va="top")
-    ax.annotate(text, xy=(xmax, ymax), xytext=(0.50,0.20), **kw)
+    ax.annotate(text, xy=(xmax, ymax), xytext=(0.90,0.20), **kw)
 
 #def approx_elastic_mod(loadpos, max):
     
