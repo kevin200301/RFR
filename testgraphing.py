@@ -20,9 +20,11 @@ def main():
 
     #print(df.loc[:, 'Total Time (s)'])
 
-    normloadpos = normalize(df.loc[:, 'Load(8800 (0,3):Load) (kN)'], df.loc[:, 'Position(8800 (0,3):Position) (mm)'], df.loc[:, 'Extension(8800 (0,3):Strain 1) (mm)'])
+    initpos = abs(df.loc[0, 'Position(8800 (0,3):Position) (mm)'])
+    normloadpos = normalize(df.loc[:, 'Load(8800 (0,3):Load) (kN)'], df.loc[:, 'Position(8800 (0,3):Position) (mm)'])
     xmax, ymax = max_load(normloadpos)
-    avgslope = approx_elastic_mod(normloadpos, xmax, ymax, df.loc[:, 'Extension(8800 (0,3):Strain 1) (mm)'])
+    print("initpos: ", initpos)
+    avgslope = approx_elastic_mod(xmax, initpos, ymax)
     print(avgslope)
 
     df.plot(x = 'Position(8800 (0,3):Position) (mm)', y = 'Load(8800 (0,3):Load) (kN)')
@@ -34,7 +36,7 @@ def main():
     plt.show()
 
 
-def normalize(load, position, extension):
+def normalize(load, position):
     #So subtract/add the intial value of position to all the values in that column so the first one is, then do the same for load
     initial_pos = abs(position.iloc[0])
     position.loc[:] += initial_pos
@@ -42,10 +44,6 @@ def normalize(load, position, extension):
 
     initial_load = abs(load.iloc[0])
     load.loc[:] += initial_load
-    #print(load)
-
-    initial_ext = abs(extension.iloc[0])
-    extension.loc[:] += initial_ext
     #print(load)
 
     df = pd.concat([load, position], axis = 1)
@@ -67,21 +65,17 @@ def annot_max(xmax, ymax, ax=None):
     
     ax.annotate(text, xy=(xmax, ymax), xytext=(0.45,0.07), **kw)
 
-def approx_elastic_mod(loadpos, xmax, ymax, extension):
-    csa = 506.71
-    #final extension/ 8inches
-    #stress = max force/area
-    #e = stress/strain
-    #return e
-    csa = 506.71
-    original_length = 203.20
+def approx_elastic_mod(pos, initpos, load):
+    # strain = xmax/ initial position not normalized
+    # e = stress/strain
+    # return e * 10^-9
 
-    print("test: ", extension[loadpos.index[loadpos['Load(8800 (0,3):Load) (kN)'] == ymax]])
-    strain = extension[loadpos.index[loadpos['Load(8800 (0,3):Load) (kN)'] == ymax]].max() / original_length    
-    stress = ymax/csa
+    csa = 0.00050671
+
+    strain = pos/initpos
+    stress = (load*1000)/csa
     e = stress/strain
-    return e
-
+    return e * 0.000000001
 
 
 if __name__ == "__main__":
