@@ -23,7 +23,7 @@ def main():
     initpos = abs(df.loc[0, 'Position(8800 (0,3):Position) (mm)'])
     normloadpos = normalize(df.loc[:, 'Load(8800 (0,3):Load) (kN)'], df.loc[:, 'Position(8800 (0,3):Position) (mm)'])
     xmax, ymax = max_load(normloadpos)
-    print("initpos: ", initpos)
+    #print("initpos: ", initpos)
     avgslope = approx_elastic_mod(xmax, initpos, ymax)
     print(avgslope)
 
@@ -59,9 +59,9 @@ def max_load(loadpos):
 def annot_max(xmax, ymax, ax=None):
     text= "Max Load: x={:.3f}, y={:.3f}".format(xmax, ymax)
     bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
-    arrowprops = dict(arrowstyle="->",connectionstyle="angle,angleA=0,angleB=60")
+    #arrowprops = dict(arrowstyle="->",connectionstyle="angle,angleA=0,angleB=60")
 
-    kw = dict(xycoords='data',textcoords="axes fraction", arrowprops=arrowprops, bbox=bbox_props, ha="right", va="top")
+    kw = dict(xycoords='data',textcoords="axes fraction", bbox=bbox_props, ha="right", va="top")
     
     ax.annotate(text, xy=(xmax, ymax), xytext=(0.45,0.07), **kw)
 
